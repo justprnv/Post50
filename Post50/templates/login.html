@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Login to Post50</h2>
+    
+    <form method="post">
+        <label for="username_or_email">Username or Email</label>
+        <input type="text" name="username_or_email" id="username_or_email" class="form-input" required>
+        
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" class="form-input" required>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Login</button>
+            <a href="{{ url_for('register') }}" class="btn btn-outline">Create Account</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Create Your Post50 Account</h2>
+    
+    <form method="post" id="registerForm">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" class="form-input" required>
+        <div id="usernameHint" class="hint"></div>
+        
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" class="form-input" required>
+        <div id="emailHint" class="hint"></div>
+        
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" class="form-input" required>
+        <div class="hint">Password must be at least 8 characters long</div>
+        
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirm_password" class="form-input" required>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+            <a href="{{ url_for('login') }}" class="btn btn-outline">Already have an account?</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

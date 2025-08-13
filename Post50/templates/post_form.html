@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if post %}Edit Post{% else %}Create New Post{% endif %}</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        <label for="title">Title</label>
+        <div class="title-editor">
+            <div class="toolbar">
+                <button type="button" onclick="formatTitle('bold')">B</button>
+                <button type="button" onclick="formatTitle('italic')">I</button>
+                <button type="button" onclick="formatTitle('underline')">U</button>
+            </div>
+            <div id="titleEditor" contenteditable="true" class="form-input title-input" data-placeholder="Enter your post title...">{{ post.title if post else '' }}</div>
+            <input type="hidden" name="title" id="title" value="{{ post.title if post else '' }}">
+        </div>
+        
+        <label for="content">Content</label>
+        <div class="editor">
+            <div class="toolbar">
+                <button type="button" onclick="formatText('bold')">B</button>
+                <button type="button" onclick="formatText('italic')">I</button>
+                <button type="button" onclick="formatText('underline')">U</button>
+                <button type="button" onclick="insertList()">• List</button>
+                <button type="button" onclick="insertLink()">🔗 Link</button>
+                <button type="button" onclick="insertImage()">🖼️ Image</button>
+            </div>
+            <div id="editor" contenteditable="true" class="form-textarea" data-placeholder="Share your thoughts...">{{ post.content if post else '' }}</div>
+            <input type="hidden" name="content" id="content" value="{{ post.content if post else '' }}">
+        </div>
+        
+        <label for="image">Image (optional)</label>
+        <input type="file" name="image" id="image" class="form-input" accept="image/*">
+        
+        <label for="postTags">Tags (comma-separated)</label>
+        <input type="text" name="tags" id="postTags" class="form-input" value="{{ (post.tags | map(attribute='name') | join(', ')) if post else '' }}" placeholder="e.g., life, inspiration, tech">
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% if post %}Update Post{% else %}Create Post{% endif %}</button>
+            <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<div class="hint">
+    <p>💡 <strong>Tips:</strong></p>
+    <ul>
+        <li>Use the toolbar to format your title and content</li>
+        <li>Use hashtags to categorize your post (e.g., life, inspiration)</li>
+        <li>Images will be automatically resized for optimal display</li>
+        <li>Your draft is automatically saved as you type</li>
+    </ul>
+</div>
+{% endblock %}

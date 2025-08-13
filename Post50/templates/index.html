@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Posts Feed -->
+<div id="postsFeed" class="posts-feed">
+    {% for post in posts %}
+    <div class="post-card" data-post-id="{{ post.id }}">
+        <div class="post-header">
+            <div class="post-emoji">📝</div>
+            <div class="post-title">{{ post.title | safe }}</div>
+        </div>
+        
+        <div class="post-meta">
+            <span class="post-author">By <a href="{{ url_for('profile', user_id=post.author.id) }}" class="author-link">{{ post.author.username }}</a></span>
+            <span class="post-date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+        </div>
+        
+        <div class="post-content">{{ post.content | safe }}</div>
+        
+        {% if post.image_path %}
+        <img src="{{ post.image_path }}" alt="Post image" class="post-image">
+        {% endif %}
+        
+        {% if post.tags %}
+        <div class="post-tags">
+            {% for tag in post.tags %}
+            <span class="tag">#{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="post-footer">
+            <div class="post-actions">
+                <button class="action-btn" onclick="votePost({{ post.id }}, 'up')" data-vote-type="up">
+                    👍 <span class="score">{{ post.upvotes }}</span>
+                </button>
+                <button class="action-btn" onclick="votePost({{ post.id }}, 'down')" data-vote-type="down">
+                    👎 <span class="score">{{ post.downvotes }}</span>
+                </button>
+                <button class="action-btn" onclick="toggleComments({{ post.id }})">
+                    💬 <span class="comment-count">{{ post.comments|length }}</span>
+                </button>
+            </div>
+            
+            {% if current_user.is_authenticated and post.author_id == current_user.id %}
+            <div class="post-manage">
+                <a href="{{ url_for('post_edit', post_id=post.id) }}" class="btn btn-outline manage-btn">Edit</a>
+                <button class="btn btn-danger manage-btn" onclick="deletePost({{ post.id }})">Delete</button>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Comments Section -->
+        <div id="comments-{{ post.id }}" class="comment-list" style="display: none;">
+            {% for comment in post.comments %}
+            <div class="comment">
+                <strong>{{ comment.author.username }}</strong>: {{ comment.content }}
+            </div>
+            {% endfor %}
+            
+            {% if current_user.is_authenticated %}
+            <form onsubmit="addComment(event, {{ post.id }})" style="margin-top: 16px;">
+                <input type="text" placeholder="Add a comment..." class="form-input" id="comment-{{ post.id }}" required>
+                <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Comment</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Load More Button -->
+<div class="load-more-container">
+    <button id="loadMoreBtn" class="btn btn-outline" onclick="loadMorePosts()">Load More Posts</button>
+</div>
+
+<!-- Post Template for JavaScript -->
+<template id="postItemTemplate">
+    <div class="post-card" data-post-id="">
+        <div class="post-header">
+            <div class="post-emoji">📝</div>
+            <div class="post-title"></div>
+        </div>
+        
+        <div class="post-meta">
+            <span class="post-author"></span>
+            <span class="post-date"></span>
+        </div>
+        
+        <div class="post-content"></div>
+        
+        <div class="post-image" style="display: none;"></div>
+        
+        <div class="post-tags"></div>
+        
+        <div class="post-footer">
+            <div class="post-actions">
+                <button class="action-btn" data-vote-type="up">
+                    👍 <span class="score">0</span>
+                </button>
+                <button class="action-btn" data-vote-type="down">
+                    👎 <span class="score">0</span>
+                </button>
+                <button class="action-btn">
+                    💬 <span class="comment-count">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="comment-list" style="display: none;">
+            <form onsubmit="addComment(event, '')" style="margin-top: 16px;">
+                <input type="text" placeholder="Add a comment..." class="form-input" required>
+                <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Comment</button>
+            </form>
+        </div>
+    </div>
+</template>
+{% endblock %}
